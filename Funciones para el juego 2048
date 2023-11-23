@@ -1,0 +1,705 @@
+#include <iostream>
+#include<time.h>
+#include<stdio_ext.h>
+#include<string.h>
+#include "estructuras.h"
+#include "prototipo.h"
+#define T 4
+#define Max 2048
+#define CANTJUG 100
+
+
+
+void iniciomatriz(int matriz[T][T]){//inicia toda la matriz con ceros para que no muestre basura
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			matriz[i][j] = 0;
+		}
+	}
+}
+void generodos(int matriz[T][T]){//genera dos a donde no encuentre ceros y los genera si la funcion contador_0 no devuelve 0 
+	int fil,col;
+	srand(time(NULL));
+	if (contador_0(matriz) !=0) {
+		do{
+			fil=rand()% T;
+			col=rand()% T;	
+		} while(matriz[fil][col] != 0);
+		matriz[fil][col]=2;	
+	}
+	
+}
+int contador_0(int matriz[T][T]) {//busca donde ahi ceros de la matriz si encuentra 1 incrementa la variable n en 1 y asi va viendo la cantidad de 0 en la matriz
+	int n = 0;
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			if (matriz[i][j] == 0) {
+				n++;
+			}
+		}
+	}
+	return n;
+}	
+bool perdio(int matriz[T][T]){//verifica dentro de la matriz quedan movimientos si quedan retorna true si no quedan mas movimientos por hacer retorna false 
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 3; j++) {
+			if (matriz[i][j] == matriz[i][j + 1] || matriz[j][i] == matriz[j + 1][i]) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+void gano(int matriz[T][T], bool &cortar,int puntaje){//verifica todas las casillas de la matriz y si encuentra una con el numero 2048 muestra el mensaje ganaste y el puntaje con el que gano
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			if(matriz[i][j]==Max){
+				printf("\n\n\n\n                                ====================GANASTE====================\n");
+				printf("                                            PUNTAJE TOTAL: %d PUNTOS.\n",puntaje);
+				cortar=false;
+			}//recorro la matriz y si en alguna posicion hay un valor=a la constante Max muestra que ganaste
+		}//en ese caso la variable de tipo bool se hace false y termina el juego ya que no vuelve a entrar al ciclo
+	}	
+}
+void pierde(int matriz[T][T],bool &cortar){//*luego de que el contador_0 llegue a 0 porque no quedan mas lugares libres en la matriz llama a la funcion perdio 
+	//para verificar si queda algun movimiento para realizar y si quedan sigue jugando si no quedan muestra el mensaje perdiste haciendo saber al jugadore que quedo sin moivmientos
+	
+	if (contador_0(matriz) == 0) {
+		if (perdio(matriz)) {
+			printf("\n\n\n\n\n\n                               ====================PERDISTE====================");
+			cortar=false;
+		}
+	}
+}
+	
+	
+void inicio(int matriz[T][T], bool &cortar, int puntaje,char tec){//muestra la matriz actualizada y puntajes, ademas verifica si gana o pierede
+
+	system("clear");
+	printf("                                           BIENVENIDO AL JUEGO 2048\n");
+	printf("                                  ==========================================\n");
+	printf("                                    JUEGO: 2048    ");
+	printf("	        PUNTAJE %d  \n",puntaje);
+	printf("				  ==========================================\n\n");
+	
+	printf("			-----------------------------------------------------------------");
+	
+	printf("\n");
+	for(int i=0;i<T;i++)
+	{	printf("			|");
+	for(int j=0;j<T;j++)
+	{
+		
+		printf("\t%d\t|",matriz[i][j]);
+	}
+	printf ("\n			-----------------------------------------------------------------\n");	
+	}
+	switch(tec) {
+	case 'y':
+		printf("                        Movimiento: Arriba\n");
+		break;
+	case 'b':
+		printf("                        Movimiento: Abajo\n");
+		break;
+	case 'g':
+		printf("                        Movimiento: Izquierda\n");
+		break;
+	case 'h':
+		printf("                        Movimiento: Derecha\n");
+		break;
+	
+	}	
+	pierde(matriz,cortar);
+	gano(matriz,cortar,puntaje);
+}
+void movimiento_derecha(int matriz[T][T], int &puntaje){//mueve derecha
+	for(int i=0;i<3;i++){
+		for(int y=3;y>0;y--){
+			for(int x=3;x>=0;x--){
+				if (matriz[x][y] ==0){
+					matriz[x][y] = matriz [x][y-1];
+					matriz [x][y-1] = 0;
+				}
+			}
+		}
+	}
+	for(int y=3;y>0;y--){
+		for(int x=3;x>=0;x--){
+			if (matriz[x][y] == matriz [x][y-1]){
+				matriz[x][y] *=	2;
+				puntaje+= matriz[x][y];
+				matriz [x][y-1] =0;
+			}
+		}
+	}
+	for(int i=0;i<3;i++){
+		for(int y=3;y>0;y--){
+			for(int x=3;x>=0;x--){
+				if (matriz[x][y] ==0){
+					matriz[x][y] = matriz [x][y-1];
+					matriz [x][y-1] = 0;
+				}
+			}
+		}
+	}
+}
+void movimiento_izquie(int matriz[T][T], int &puntaje){//mueve izquierda
+	for(int i=0;i<3;i++){
+		for(int y=0;y<3;y++){
+			for(int x=0;x<=3;x++){
+				if (matriz[x][y] ==0){
+					matriz[x][y] = matriz [x][y+1];
+					matriz [x][y+1] = 0;//(leonardo)en este paso se juntan todos los numeros distintos de 0 a la izquierda
+					
+					
+				}
+			}
+		}
+	}
+	for(int y=0;y<3;y++){//(leonardo)aqui recorro la matriz,si encuentra en dos posiciones seguidas numeros iguales,la primera posicion se multiplica por dos y en la siguiente se pone un cero
+		for(int x=0;x<=3;x++){
+			if (matriz[x][y] ==matriz [x][y+1]){
+				matriz[x][y] *=2 ;
+				puntaje+=  matriz[x][y];
+				matriz [x][y+1] = 0;
+				
+				
+			}
+		}
+	}
+	for(int i=0;i<3;i++){//(leonardo)aqui vuelvo a recorrer y a juntar todos los numeros distintos de cero en la izquierda
+		for(int y=0;y<3;y++){
+			for(int x=0;x<=3;x++){
+				if (matriz[x][y] ==0){
+					matriz[x][y] = matriz [x][y+1];
+					matriz [x][y+1] = 0;
+					
+					
+				}
+			}
+		}
+	}
+}
+void movimiento_arriba(int matriz[T][T], int &puntaje){//mueve arriba 
+	for (int j = 0; j < T; j++) {
+		int c=0;
+		for (int i = 1; i < T; i++) {
+			if (matriz[i][j] > 0){
+				if (matriz[c][j]==0 && matriz[i][j] !=0){
+					matriz[c][j] = matriz[i][j];
+					matriz[i][j] = 0;
+				} else{
+					if (matriz[c][j] == matriz[i][j]) {
+						matriz[c][j] *= 2;
+						puntaje += 2 * matriz[i][j];
+						matriz[i][j] = 0;
+						c++;
+					} else{
+						matriz[c+1][j] = matriz[i][j];
+						if (i !=c+1) {
+							matriz[i][j] = 0;
+						}
+						c++;
+					}	
+				}
+			}
+		}
+	}
+}
+void movimiento_abajo(int matriz[T][T], int &puntaje){//mueve abajo
+	for (int j = 0; j < T; j++) {
+		int c=3;
+		for (int i=2;i>=0;i--) {
+			if (matriz[i][j] > 0) {
+				if (matriz[c][j] == 0 && matriz[i][j]>0) {
+					matriz[c][j] = matriz[i][j];
+					matriz[i][j] = 0;
+				} else{
+					if(matriz[c][j] == matriz[i][j]) {
+						matriz[c][j] *= 2;
+						puntaje += 2 * matriz[i][j];
+						matriz[i][j] = 0;
+						c--;
+					} else{
+						matriz[c-1][j] = matriz[i][j];
+						if(i !=c-1) {
+							matriz[i][j] = 0;
+						}
+						c--;
+					}
+				}
+			}
+		}
+	}
+}	
+void teclas(int matriz[T][T], bool cortar,int puntaje,char &tec){//netra en vucle y con getchar captura una tecla para buscarla luego dentro del switch y hacer el movimiento y muestra la matriz nuevamente y genera un dos si es necesario
+
+	while(cortar){
+		tec=getchar();
+		switch(tec) {
+		case 'y':
+			movimiento_arriba(matriz,puntaje);
+			generodos(matriz);
+			inicio(matriz,cortar,puntaje,tec);
+			break;
+		case 'b':
+			movimiento_abajo(matriz,puntaje);
+			generodos(matriz);
+			inicio(matriz,cortar,puntaje,tec);
+			break;
+		case 'g':
+			movimiento_izquie(matriz,puntaje);
+			generodos(matriz);
+			inicio(matriz,cortar,puntaje,tec);
+			break;
+		case 'h':
+			movimiento_derecha(matriz,puntaje);
+			generodos(matriz);
+			inicio(matriz,cortar,puntaje,tec);
+			break;
+		case 'a':
+			system("clear");
+			printf("Usted a cancelado la partida.\n");
+			cortar=false;
+			getchar();
+		}	
+	}
+}
+void menu(){//menu de inicio
+	printf("\t===================\n");
+	printf("\t\tMENU\n");
+	printf("\t===================\n");
+	printf(" 1- Gestion de usuario: \n 2- Jugar: \n 3- informes:\n 4- Salir\n");
+
+}
+int ingopcion(){//ingresa la opcion para moverse entre menus (tiene ser una opcion en numero)
+	int opcion;
+	printf("\nINGRESA UNA OPCION:");
+	scanf("%d",&opcion);
+	return opcion;
+}
+char confirmaSN(){//funcion para capturar una tecla y luego usarla en las funciones para confirmar si desea realizar lo que esat haciendo 
+	char ele;
+	__fpurge(stdin);
+	scanf("%c",&ele);
+	return ele;
+}
+	
+digito ingresoCedula(){//ingrsar una cedula
+	digito cedaux;
+	int contador=0;
+	printf("\nIngrese cedula: ");
+	__fpurge(stdin);
+	while(contador<LARGOC&&(cedaux.numero[contador]=getchar()-48) !='\n'){//tenemos que hacxaer el numero ASCCII -48 para pasarlo a un numero comun 
+		contador++;	
+	}
+	cedaux.largodigito=contador;
+	
+	return cedaux;
+}
+
+fechas ingresoFechanacimiento(){//ingresar fecha de nacimiento
+	fechas f;
+	printf("\nIngrese fecha de nacimiento dd/mm/aa: ");scanf("%d/%d/%d",&f.dia,&f.mes,&f.anio);
+	
+	return f;
+}
+fechapartida ingresofechapartida(){//ingresar fecha de la partida
+	fechapartida fp;
+	printf("\nIngrese fecha: dd/mm/aa: ");scanf("%d/%d/%d",&fp.dia,&fp.mes,&fp.anio);
+		
+	return fp;
+}
+hora ingresohorapartida(){//ingresar hora de la partida
+	hora h;
+	printf("\nIngrese hora en el formato: hs:min ");scanf("%d:%d",&h.hora,&h.minutos);
+	printf("\n");
+	return h;
+}
+void muestrohorapartida(hora horapart){
+	printf("hora de la partida: ");
+	printf("%d:%d\n\n",horapart.hora,horapart.minutos);
+}
+void muestrofechapartida(fechapartida fechapar){//muestra la fecha de la partida
+	printf("\nfecha de partida: ");
+	printf("%d/%d/%d\n",fechapar.dia,fechapar.mes,fechapar.anio);	
+}
+int ingresoEdad(){//ingresar edad jugador
+	int edad;
+	printf("\nIngrese edad: ");
+	scanf("%d",&edad);
+	return edad;
+}
+nomb ingresoNombre(){//ingresar nombre
+	int contador=0;
+	nomb n;
+	printf("\nIngrese nombre de hasta %d caracteres: ",LARGON);
+	while (contador < LARGON && (n.palabra[contador]=getchar()) != '\n') {
+		contador++;
+	}
+	n.largopalabra=contador;
+	return n;
+}
+apellido ingresoApellido(){//ingresar apellido 
+	int contador=0;
+	apellido a;
+	printf("\nIngrese apellido de hasta %d caracteres: ",APELLIDO_USUARIO);
+	while (contador < APELLIDO_USUARIO && (a.apellido[contador]=getchar()) != '\n') {
+		contador++;
+	}
+	a.largoapellido=contador;
+	return a;
+}
+tipo ingresoAlias(){//ingresar alias
+	int contador=0;
+	tipo s;
+	printf("\nIngrese Alias de hasta %d caracteres: ",ALIAS);
+	__fpurge(stdin);
+	while (contador < ALIAS && (s.palabra[contador]=getchar()) != '\n') {
+		contador++;
+	}
+	s.tamanioP=contador;
+	return s;
+}
+local ingresoLocalidad(){//ingresar una localidad
+	int contador=0;
+	local l;
+	printf("\nIngrese localidad de hasta %d caracteres: ",LOCALIDA);
+	while (contador < LOCALIDA && (l.local[contador]=getchar()) != '\n') {
+		contador++;
+	}
+	l.Ptamanio=contador;
+	return l;
+}
+void muestroAlias(tipo alias){//muestro su alias ingresado
+	int a;
+	printf("\nEl alias ingresado es: ");
+	for(a=0;a<alias.tamanioP;a++){
+		printf("%c",alias.palabra[a]);
+	}
+}	
+void muestroAlias2(tipo alias){//muestro su alias ingresado
+	int a;
+	printf("\nAlias: ");
+	for(a=0;a<alias.tamanioP;a++){
+		printf("%c",alias.palabra[a]);
+	}
+}	
+void muestroNombre(nomb nombre) {//mjuestro su nombre ingresado
+	int c;
+	
+	printf("\nEl nombre ingresado es: ");
+	for(c=0;c<nombre.largopalabra;c++){
+		printf("%c",nombre.palabra[c]);
+	}
+}
+void muestroLocalidad(local loc) {//muestro su localidad 
+	int c;
+	
+	printf("\nSu localidad ingresada es: ");
+	for(c=0;c<loc.Ptamanio;c++){
+		printf("%c",loc.local[c]);
+	}
+}
+void muestroEdad(int edad){//muestro su edad
+	printf("\nSu edad es: %d", edad);
+}
+void muestroFechanacimiento(fechas fechanac){//muestro fechanaciimiento
+	printf("\nsu fecha de nacimiento es: ");
+	printf("%d/%d/%d",fechanac.dia,fechanac.mes,fechanac.anio);
+}
+void muestroCedula(digito cedula){//muestro la cedula 
+	printf("\nSu cedula ingresada es: ");
+	for(int i=0;i<cedula.largodigito;i++){
+		printf("%d",cedula.numero[i]);
+	}
+	
+}
+void muestroApellido(apellido apelli){//muestro apellido 
+	int c;
+	
+	printf("\nEl apellido ingresado es: ");
+	for(c=0;c<apelli.largoapellido;c++){
+		printf("%c",apelli.apellido[c]);
+	}
+}
+bool comparoAlias(tipo A1, tipo A2){//comapro dos alias para verificar si son iguales
+	if(A1.tamanioP !=A2.tamanioP){//si su tamaño es igual
+		return false;
+	}
+	for(int i=0;i<A1.tamanioP;i++){//si sus letras sin iguales
+		if(A1.palabra[i] !=A2.palabra[i]){
+			return false;
+		}
+	}
+	return true;
+}
+int buscoJUGADOR(jugador jugadores[],int pos, tipo ali){
+	for(int i=0;i<pos;i++){
+		if(comparoAlias(jugadores[i].alias,ali)){//compara con cada alias que este guardado
+			return i;
+		}
+	}
+	return -1;
+}
+int buscopartidas(partidas partidasguardadas[],int pospartidas, tipo ali){
+	for(int i=0;i<pospartidas;i++){
+		if(comparoAlias(partidasguardadas[i].aliass,ali)){//compara con cada alias que este guardado
+			return i;
+		}
+	}
+	return -1;
+}
+void menugestionusuario(){
+	system("clear");
+	printf("\t====================\n");
+	printf("\t GESTION DE USUARIO\n");
+	printf("\t====================\n");
+	printf("1.Alta de usuario.\n\n2.Baja de usuario.\n\n3.Modoficacion de usuario.\n\n4.Volver al menu principal.\n");
+	
+}
+void menuinformes(){
+	system("clear");
+	printf("========\n");
+	printf("INFORMES\n");
+	printf("========\n");
+	printf("1.listado de usuarios: \n");
+	printf("2.listado de partidas jugadas: \n");
+	printf("3.volver al menu principal\n");
+}
+void baja(jugador jugadores[], int pos){//dar de baja al usuario y ponerl euna B para que se sepa que esta de baja
+	tipo auxalias;
+	int lugar;
+	char confirma;
+	auxalias=ingresoAlias();
+	lugar= buscoJUGADOR(jugadores,pos,auxalias);
+	if(lugar>=0){
+		printf("Desea dar de baja a este jugador? S/N");
+		confirma=confirmaSN();
+		
+		if (confirma=='s'||confirma=='S') 
+		{
+			jugadores[lugar].estado='B';
+		}
+		printf("jugadore dado de baja correctamente.");
+		__fpurge(stdin);
+		getchar();
+	} else{
+		
+		printf("Usuario no existe");
+		__fpurge(stdin);
+		getchar();
+		
+	}
+}
+void alta(jugador jugadores[],int &pos) {//dar alta de usuario, pide los datos del usuario nombre,apellido,fechanaciomiento,edad,cedula y un alias
+	int verifica;
+	int existe;
+	int auxEdad;
+	fechas auxfecha;
+	digito auxci;
+	tipo auxalias;
+	nomb auxNombre;
+	local auxlocalidad;
+	apellido auxapelli;
+	char confirma;
+	__fpurge(stdin);
+	auxalias = ingresoAlias();
+	existe = buscoJUGADOR(jugadores,pos,auxalias);
+	__fpurge(stdin);
+	
+	if (existe !=-1) {
+		printf("Este alias ya esta en uso.");
+		printf("\nPara volver al menu principal precione ENTER.");
+		__fpurge(stdin);
+		getchar();
+	} else{
+		__fpurge(stdin);
+		auxci=ingresoCedula();
+		__fpurge(stdin);
+		verifica=verificoCedula(auxci);
+		if(verifica !=-1){
+			__fpurge(stdin);
+			auxNombre = ingresoNombre();
+			__fpurge(stdin);
+			auxapelli = ingresoApellido();
+			__fpurge(stdin);
+			auxlocalidad=ingresoLocalidad();
+			__fpurge(stdin);
+			auxEdad = ingresoEdad();
+			__fpurge(stdin);
+			auxfecha = ingresoFechanacimiento();
+			__fpurge(stdin);
+			printf("Desea guardar los datos de este jugadore? S/N");
+			confirma = confirmaSN();
+			if (confirma == 's' || confirma == 'S') {
+				jugadores[pos].localida=auxlocalidad;
+				jugadores[pos].alias = auxalias;
+				jugadores[pos].cedula = auxci;
+				jugadores[pos].nombre = auxNombre;
+				jugadores[pos].apelli = auxapelli;
+				jugadores[pos].edad = auxEdad;
+				jugadores[pos].fechanacimiento = auxfecha;
+				jugadores[pos].estado='A';
+				pos++;
+			}
+		} else{
+			printf("Su cedula no cumple con los requicitos necesarios");
+			getchar();
+		}
+
+	}
+}
+void modifico(jugador jugadores[],int &pos){//modificar solo la localida de un usario
+	char conf;
+	tipo auxalias;
+	local auxlocalidad;
+	int lugar;
+	auxalias=ingresoAlias();
+	lugar=buscoJUGADOR(jugadores,pos,auxalias);
+	if(lugar !=-1&&jugadores[lugar].estado=='A'){
+		
+		muestroNombre(jugadores[lugar].nombre);
+		muestroApellido(jugadores[lugar].apelli);
+		muestroCedula(jugadores[lugar].cedula);
+		muestroAlias(jugadores[lugar].alias);
+		muestroLocalidad(jugadores[lugar].localida);
+		muestroEdad(jugadores[lugar].edad);
+		muestroFechanacimiento(jugadores[lugar].fechanacimiento);
+		
+		auxlocalidad=ingresoLocalidad();
+		
+		printf("Esta seguro de modificar esta informacion?? S/N");
+		conf=confirmaSN();
+		
+		if (conf=='s'||conf=='S'){
+			
+			jugadores[lugar].localida=auxlocalidad;
+			
+			printf("Usuario modificado correctamente.\n");
+			__fpurge(stdin);
+			getchar();
+		}
+		
+	} else{
+		if(lugar == -1){
+			printf("El usuario que trata de ingresar no existe.");
+			__fpurge(stdin);
+			getchar();
+		} else{
+			printf("Usuario ha sido deshabilitado anteriormente\nrehabilitar? s/n\n");
+			conf=confirmaSN();
+			
+			if(conf=='s'||conf=='S')
+			{
+				jugadores[lugar].estado='A';
+			}
+			
+			printf("Usuario rehabilitado correctamente.\n");
+			__fpurge(stdin);
+			getchar();
+		}
+	}
+	system("clear");
+}
+void altapartidas(partidas partidasguardadas[],jugador jugadores[],int &pos,int &pospartidas,char &continua,int &posresultado,int &op) {//alta de partida
+		
+		int existe;
+		fechapartida auxfecha;
+		hora auxhora;
+		tipo auxalias;
+		char confirma;
+		__fpurge(stdin);
+		auxalias = ingresoAlias();
+		existe=buscoJUGADOR(jugadores,pos,auxalias);
+		if (existe == -1) {
+			printf("El alias ingresado no existe.\nPara jugar primero deve estar registrado.\n");
+			printf("Para volver al menu principal precione ENTER.");
+			getchar();
+		} else{
+			auxfecha=ingresofechapartida();
+			__fpurge(stdin);
+			auxhora=ingresohorapartida();
+			__fpurge(stdin);
+			printf("Desea guardar los datos de este jugadore? S/N");
+			confirma = confirmaSN();
+			if (confirma == 's' || confirma == 'S') {
+				partidasguardadas[pospartidas].aliass = auxalias;
+				partidasguardadas[pospartidas].fechpartida = auxfecha;
+				partidasguardadas[pospartidas].horapartida = auxhora;
+				partidasguardadas[pospartidas].resultado = 'L';
+				continua='s';
+				pospartidas++;
+			}
+			op=5;
+		}
+	}
+	
+void ordenoxSeleccion(partidas partidasguardadas[],int pospartidas){//ordena los pacientes por abecedario
+	int i,j,l;
+	partidas aux;
+	partidas lpartidas;
+	for(i=0;i<pospartidas-1;i++)
+	{
+		l=i;
+		lpartidas=partidasguardadas[i];
+		for(j=i+1;j<pospartidas;j++)
+		{
+			if (strcmp(partidasguardadas[j].aliass.palabra,lpartidas.aliass.palabra)<0 )
+			{
+				lpartidas=partidasguardadas[j];
+				l=j;
+			}
+		}
+		aux = partidasguardadas[l];
+		partidasguardadas[l] = partidasguardadas[i];
+		partidasguardadas[i] = aux;
+	}
+}
+void ordenoxSeleccionjug(jugador jugadores[],int pos){//ordena los pacientes por abecedario
+	int i,j,l;
+	jugador aux;
+	jugador ljugadores;
+	for(i=0;i<pos-1;i++)
+	{
+		l=i;
+		ljugadores=jugadores[i];
+		for(j=i+1;j<pos;j++)
+		{
+			if (strcmp(jugadores[j].alias.palabra,ljugadores.alias.palabra)<0 )
+			{
+				ljugadores=jugadores[j];
+				l=j;
+			}
+		}
+		aux = jugadores[l];
+		jugadores[l] =  jugadores[i];
+		jugadores[i] = aux;
+	}
+}
+int verificoCedula(digito c1) {
+	int verifico[7]={2,9,8,7,6,3,4};
+	int numero;
+		// Verificar que la cedula tenga 8 numeros
+		if (c1.largodigito != 8) {
+			return -1;
+		}
+		__fpurge(stdin);
+			
+		// Obtener el digito verificador
+		int digito_verificador = c1.numero[7];
+		__fpurge(stdin);
+		// Calcular el digito verificador
+		int suma = 0;
+		for (int i = 0; i < 7; i++) {
+			suma+=c1.numero[i]*verifico[i];
+		}
+		__fpurge(stdin);
+		numero = (suma % 10);
+		int digito_verificador_esperado = (10 - numero) % 10;
+		if(digito_verificador == digito_verificador_esperado){
+			return 0;
+		} else{
+			return -1;
+		}
+	}
