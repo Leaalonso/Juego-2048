@@ -1,0 +1,59 @@
+#ifndef ESTRUCTURAS_H
+#define ESTRUCTURAS_H
+#define ALIAS 10
+#define LARGON 20
+#define APELLIDO_USUARIO 30
+#define LARGOC 8
+#define LOCALIDA 30
+typedef struct _digito{
+	int numero[LARGOC];  //contiene la cantidad de digitos de la ci.
+	int largodigito;  //cantidad de digitos de la ci.
+}digito;
+typedef struct _fecha{//fecha de nacimieno desde el dia, mes y anio
+	int dia;
+	int mes;
+	int anio;
+}fechas;
+typedef struct _fechaparida{//fecha de la partida
+	int dia;
+	int mes;
+	int anio;
+}fechapartida;
+typedef struct horapartida{//hora de la partida
+	int hora;
+	int minutos;
+}hora;
+typedef struct _localidad{
+	char local[LOCALIDA];//contiene caracteres que forman la localidad
+	int Ptamanio;//cantidad e caracteres que forman la localida 
+}local;
+typedef struct _tipo{
+	char palabra[ALIAS];//contienen los caracteres que forman los alias 
+	int tamanioP;//cantidad de caracteres
+}tipo;
+typedef struct _nombre{
+	char palabra[LARGON];  //contiene los caracteres que forman el nombre del jugador.
+	int largopalabra; //cantidad de caracteres del nombre
+}nomb;
+typedef struct _apellido{
+	char apellido[APELLIDO_USUARIO];  //contiene los caracteres que forman el nombre del jugador.
+	int largoapellido; //cantidad de caracteres del nombre
+}apellido;
+typedef struct _jugador{
+	nomb nombre;//llama a la estructura del nombre
+	apellido apelli;//llama a la estructura del apellido 
+	local localida;//llama a la estructura de localida 
+	digito cedula;//llama a la estructura de localidad
+	int edad;//guarda la edad 
+	fechas fechanacimiento;//llama la estructura de fecha
+	tipo alias;//llama a la estructura de alias 
+	char estado;//estado del jugador entre A (activo) o B (baja)
+} jugador; 
+typedef struct _partidas{
+	tipo aliass;
+	fechapartida fechpartida;
+	hora horapartida;
+	int resultado;
+}partidas;
+
+#endif
