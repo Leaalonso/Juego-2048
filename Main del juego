@@ -1,0 +1,133 @@
+#include<iostream>
+#include<stdlib.h>
+#include<time.h>
+//#include<stdio_ext.h>
+#include<string.h>
+using namespace std;
+#include "estructuras.h"
+#include "prototipo.h"
+#define CANTJUG 100
+
+int main (){
+	int matriz[T][T];
+	char continua='n';
+	int pos=0;
+	int posresultado;
+	int pospartidas=0;
+	char tec;
+	bool cortar = true;
+	int puntaje=0;
+	jugador jugadores[CANTJUG];
+	partidas partidasguardadas[CANTJUG];
+	int op;
+	do{
+		menu();
+		op=ingopcion();
+		do{
+			if(op==4){
+				printf("A FINALIZADO EL PROGRAMA.");
+				return 0;
+			}
+			switch(op){
+			case 1:
+				while(op !=4){
+					menugestionusuario();
+					op=ingopcion();
+					switch(op){
+					case 1:
+						alta (jugadores,pos);
+						op=4;
+						break;
+					case 2:
+						baja(jugadores,pos);
+						op=4;
+						break;
+					case 3:
+						modifico(jugadores,pos);
+						op=4;
+						break;
+					}
+				}
+				system("clear");
+				break;
+			case 2:
+				altapartidas(partidasguardadas,jugadores,pos,pospartidas,continua,posresultado,op);
+				break;
+			case 3:
+				while(op !=4){
+					menuinformes();
+					op=ingopcion();
+					switch(op){
+					case 1:
+						if(pos==0){
+							printf("aun no existen jugadores.");
+							printf("\npara volver al menu principal precione ENTER. ");
+							__fpurge(stdin);
+							getchar();
+							system("clear");
+						}else{
+							ordenoxSeleccionjug(jugadores,pos);
+							for(int i=0;i<pos;i++){
+								printf("\njugador %d: ",i+1);
+								muestroAlias(jugadores[i].alias);
+								muestroCedula(jugadores[i].cedula);
+								muestroNombre(jugadores[i].nombre);
+								muestroApellido(jugadores[i].apelli);
+								muestroLocalidad(jugadores[i].localida);
+							}
+							getchar();
+							printf("\npara volver al menu principal precione ENTER: ");
+							getchar();
+							system("clear");
+						}
+						op=4;
+						break;
+					case 2:
+						if(pospartidas==0){
+							printf("no existen partidas.");
+							printf("\npara volver al menu principal precione 1: ");
+							__fpurge(stdin);
+							
+							getchar();
+							system("clear");
+						}else{
+							ordenoxSeleccion(partidasguardadas,pospartidas);
+							for(int i=0;i<pospartidas;i++){
+								muestroAlias2(partidasguardadas[i].aliass);
+								muestrofechapartida(partidasguardadas[i].fechpartida);
+								muestrohorapartida(partidasguardadas[i].horapartida);										
+							}
+							printf("\npara volver al menu principal precione ENTER. ");
+							__fpurge(stdin);
+							getchar();
+							system("clear");
+						}
+						op=4;
+					break;
+					case 3:
+						op=4;
+						break;
+					}
+				}
+				break;
+			}
+			system("clear");
+			if(op !=5){
+				__fpurge(stdin);
+				menu();
+				op=ingopcion();
+			}
+			system("clear");	
+		}while(op !=5);
+		iniciomatriz(matriz);
+		generodos(matriz);
+		generodos(matriz);
+		inicio(matriz,cortar,puntaje,tec);
+		teclas(matriz,cortar,puntaje,tec);
+		getchar();
+		printf(" \n \n                                             DESEA CONTINUAR?? (s/n)");
+		scanf("%c", &continua);	
+		system("clear");
+	}while(continua=='s');
+	return 0;
+}
