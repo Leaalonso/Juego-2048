@@ -1,0 +1,52 @@
+#ifndef PROTOTIPO_H
+#define PROTOTIPO_H
+#define T 4
+int contador_0(int matriz[T][T]);
+void jugemos(int matriz[T][T],bool cortar,int &puntaje);
+bool perdio(int matriz[T][T]);
+void pierde(int matriz[T][T],int &cortar);
+void gano(int matriz[T][T], bool &cortar,int puntaje);
+void iniciomatriz(int matriz[T][T]);
+void inicio(int matriz[T][T], bool &cortar, int puntaje,char tec);
+void teclas(int matriz[T][T], bool cortar,int puntaje,char &tec);
+void generodos(int matriz[T][T]);
+void movimiento_izquie(int matriz[T][T], int &puntaje);
+void movimiento_derecha(int matriz[T][T], int &puntaje);
+void movimiento_arriba(int matriz[T][T], int &puntaje);
+void movimiento_abajo(int matriz[T][T], int &puntaje);
+int ingopcion();
+char confirmaSN();
+int main();
+void muestroLocalidad(local loc);
+void muestroCedula(digito cedula);
+void muestroApellido(apellido apelli);
+void muestroNombre(nomb nombre);
+void muestroCedula();
+void muestroAlias(tipo alias);
+void muestroAlias2(tipo alias);
+void muestroEdad(int edad);
+void muestroFechanacimiento(fechas fechanac);
+tipo ingresoAlias();
+int ingresoEdad();
+local ingresoLocalidad();
+fechas ingresoFechanacimiento();
+fechapartida ingresofechapartida();
+void muestrofechapartida(fechapartida fechapar);
+hora ingresohorapartida();
+void muestrohorapartida(hora horapart);
+digito ingresoCedula();
+nomb ingresoNombre();
+apellido ingresoApellido();
+void menu();
+void menugestionusuario();
+void menuinformes();
+bool comparoAlias(tipo A1, tipo A2);
+int buscoJUGADOR(jugador jugadores[],int pos, tipo ali);
+void modifico(jugador jugadores[],int &pos);
+void alta(jugador jugadores[],int &pos);
+void baja(jugador jugadores[], int pos);
+void altapartidas(partidas partidasguardadas[],jugador jugadores[],int &pos,int &pospartidas,char &continua,int &resultado, int &op);
+void ordenoxSeleccion(partidas partidasguardadas[], int pospartidas);
+void ordenoxSeleccionjug(jugador jugadores[],int pos);
+int verificoCedula(digito c1);
+#endif
